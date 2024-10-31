@@ -1,72 +1,48 @@
 package com.coderhouse.models;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name="Sales")
+@Table(name = "Sales")
 public class Sale {
-	
-	@Id 
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(name = "name")
-	private String name;
-	private LocalDateTime createdAt =LocalDateTime.now();
-	
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public String getName() {
-		return name;
-	}
+    @Column(name = "name")
+    private String name;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    @ManyToMany
+    @JoinTable(
+        name = "sale_products",
+        joinColumns = @JoinColumn(name = "sale_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
+ 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
+    public List<Product> getProducts() { return products; }
+    public void setProducts(List<Product> products) { this.products = products; }
 
-	public Client getClients() {
-		return clients;
-	}
-
-	public void setClients(Client clients) {
-		this.clients = clients;
-	}
-
-	
-	@OneToOne(mappedBy = "Sales")
-	private Client clients;
-
-	@Override
-	public String toString() {
-		return "Sales [id=" + id + ", date=" +  ", name=" + name + ", createdAt=" + createdAt + ", updatedAt="
-				+  ", clients=" + clients + "]";
-	}
-	
-	
-	
-	
+    @Override
+    public String toString() {
+        return "Sale [id=" + id + ", name=" + name + ", createdAt=" + createdAt + ", client=" + client + "]";
+    }
 }
